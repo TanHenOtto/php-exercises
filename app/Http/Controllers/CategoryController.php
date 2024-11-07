@@ -18,7 +18,7 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryService->getList();
 
-        return view('categories.list', ['items'=> $categories]);
+        return view('categories.list', ['items' => $categories]);
     }
 
     public function edit(Category $category)
@@ -30,7 +30,7 @@ class CategoryController extends Controller
     {
         $request = $request->validated();
         $result = $this->categoryService->update($category, $request);
-        
+
         if ($result) {
             return redirect()->route('categories.index')->with('success', 'Updated success');
         }
@@ -40,6 +40,27 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        return view('categories.show', ['category'=> $category]);
+        return view('categories.show', ['category' => $category]);
+    }
+    public function create()
+    {
+        return view('categories.create');
+    }
+
+
+
+    public function store(Request $request)
+    {
+        // Xác thực dữ liệu từ form
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        // Lưu dữ liệu vào bảng `categories`
+        Category::create($request->all());
+
+        // Chuyển hướng về trang danh sách hoặc thông báo thành công
+        return redirect()->route('categories.index')->with('success', 'Danh mục đã được thêm thành công.');
     }
 }
